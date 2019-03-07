@@ -1,0 +1,24 @@
+{
+  "name": "small-tpl",
+  "version": "1.0.1",
+  "description": "small template engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1144/small-tpl.git"
+  },
+  "keywords": [
+    "js",
+    "template",
+    "engine"
+  ],
+  "author": "hahaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1144/small-tpl/issues"
+  },
+  "homepage": "https://github.com/1144/small-tpl#readme"
+}
