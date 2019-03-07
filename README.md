@@ -1,7 +1,7 @@
 # small-tpl
 small template engine
 
-# 标记语法
+# 模板语法
 
 `<?` 开始标签
 
@@ -50,12 +50,12 @@ for 循环
 <ul>
 <? each $data.focusList ?>
   <li>
-		<?= title ?> <!-- 输出 focusList 里每一项的 title -->
+    <?= title ?> <!-- 输出 focusList 里每一项的 title -->
   <? if ($item.subTitle) { ?> <!-- $item 指向 focusList 里的每一项 -->
-		<span class="sub-title">
-			<?+ $fn.encodeXssChar($item.subTitle) ?>
-		</span>
-	<? } ?>
+    <span class="sub-title">
+      <?+ $fn.encodeXssChar($item.subTitle) ?>
+    </span>
+  <? } ?>
   </li>
 <? endeach ?>
 </ul>
