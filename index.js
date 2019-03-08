@@ -45,8 +45,8 @@ function compile(src, options) {
         inline = false;
       } else if (code.slice(0, 5)==='each ') {
         dataContext = '$item.';
-        js += ";~function(){'use strict';var $item,$i=0,$count="+code.slice(5)+
-          ".length;for(;$i<$count;$i++){$item="+code.slice(5)+"[$i];";
+        js += ";~function(){'use strict';var $i=0,$_list_="+code.slice(5)+
+          ",$count=$_list_.length,$item;for(;$i<$count;$i++){$item=$_list_[$i];";
         inline = false;
       } else {
         js += ";"+parseEcho(code)+";\r\n";
