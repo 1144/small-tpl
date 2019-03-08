@@ -1,5 +1,8 @@
 # small-tpl
+
 A small lightweight template engine.
+
+Install：`npm install small-tpl` or `yarn add small-tpl`
 
 # 模板语法
 
