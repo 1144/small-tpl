@@ -1,7 +1,7 @@
 {
   "name": "small-tpl",
-  "version": "1.0.2",
-  "description": "small template engine",
+  "version": "2.0.0",
+  "description": "A small lightweight template engine.",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
@@ -11,9 +11,8 @@
     "url": "git+https://github.com/1144/small-tpl.git"
   },
   "keywords": [
-    "js",
     "template",
-    "engine"
+    "tpl"
   ],
   "author": "hahaboy",
   "license": "MIT",

@@ -20,6 +20,10 @@ Install：`npm install small-tpl` or `yarn add small-tpl`
 
 `$fn` 模板内嵌变量，渲染模板的helper对象
 
+`$encodeChars` 模板内嵌变量，输出内容时需要编码的字符，默认包含4个字符`<`、`>`、`"`、`'`
+
+`$encode` 模板内嵌函数，输出内容时对内容进行编码
+
 `$item` 模板内嵌变量，遍历数组时指向当前数组元素
 
 `$i` 模板内嵌变量，遍历数组时指向当前数组元素的下标
@@ -29,6 +33,8 @@ Install：`npm install small-tpl` or `yarn add small-tpl`
 `=` 在“each”外时输出$data对象的属性，在“each”里时输出$item对象的属性
 
 `=!` 与“=”相似，区别在于会判断属性值是否为null或undefined，是则输出空字符串
+
+`=:` 与“=”相似，区别在于会用`$encode`编码内容
 
 `+` 直接字符串连接整个语句块，不做任何处理
 
@@ -52,12 +58,12 @@ const { compile } = require('small-tpl')
 
 // for pure Object
 const render = compile('<?= hello ?>, <?= name ?>!')
-render({ hello: 'Hello', name: 'girl' })
+render({hello: 'Hello', name: 'girl'})
 // => Hello, girl!
 
 // for Array
 const render = compile('<?+ $data[0] ?>, <?+ $data[1] ?>!')
-render([ 'Hello', 'girl' ])
+render(['Hello', 'girl'])
 // => Hello, girl!
 ```
 
@@ -106,7 +112,37 @@ JS代码内可以使用`echo`语句，上面的代码等同于：
 <? endeach ?>
 </ul>
 ```
-**特别注意**：`each`和`endeach`只能放在独立的`<? ?>`标签内，不能跟其他代码同处一个标签内。
+**特别注意**：`each`和`endeach`只能放在独立的`<? ?>`标签内，不能跟其他语句同处一个标签内。除了下面这种情况。
+
+在上面的模板中，如果不确定`someList`这个属性是否存在，可以像下面这样：
+```html
+<? each $data.someList || [] ?>
+  TODO
+<? endeach ?>
+```
+
+对输出内容进行编码，预防XSS攻击：
+```javascript
+const render = compile('<?=: content ?>')
+render({content: '<script>alert("1")</script>'})
+// => &lt;script&gt;alert(&quot;1&quot;)&lt;/script&gt;
+// 即可在页面上正常显示：<script>alert("1")</script>
+```
+
+扩充默认的`$encodeChars`，扩充只影响当前模板：
+```javascript
+const render = compile('<? $encodeChars['b'] = 'B' ?><?=: content ?>')
+render({content: 'abc'})
+// => aBc
+```
+
+手动调用`$encode`函数：
+```javascript
+const render = compile('<?+ $encode('Encode: ' + $data.content) ?>')
+render({content: '<b>abc</b>'})
+// => Encode: &lt;b&gt;abc&lt;/b&gt;
+// 页面上正常显示：Encode: <b>abc</b>
+```
 
 # Deep
 
@@ -144,6 +180,26 @@ function anonymous($data, $fn) {
     }
   }();
   echo += '</ul>';
+  return echo
+}
+
+compile('<p><?=: content ?></p>')
+
+// 模板将被编译为如下函数
+function anonymous($data, $fn) {
+  'use strict';
+  var $encodeChars = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'},
+    $encode = function (s) {
+      if (typeof s === 'string') {
+        var res = '', i = 0, l = s.length;
+        for (; i < l; i++) {
+          res += ($encodeChars[s[i]] || s[i])
+        }
+        return res
+      }
+      return s
+    };
+  var echo = '<p>' + $encode($data.content) + '</p>';
   return echo
 }
 ```

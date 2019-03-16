@@ -8,6 +8,10 @@ var regCtrl = /[\n\r'\\]/g;
 var ctrlChars = {'\r': '\\r', '\n': '\\n', "'": "\\'", '\\': '\\\\'};
 var openTag = '<?';
 var closeTag = '?>';
+var $encode = "'use strict';" +
+  "var $encodeChars={'<':'&lt;', '>':'&gt;', '\"':'&quot;', \"'\":'&#39;'}," +
+  "$encode=function(s){if(typeof s==='string'){var res='',i=0,l=s.length;"+
+  "for(;i<l;i++){res+=($encodeChars[s[i]]||s[i])}return res}return s};";
 
 // 把模板源码编译为渲染函数
 function compile(src, options) {
@@ -18,7 +22,7 @@ function compile(src, options) {
 
   src = src.replace(regComment, '').split(leftTag);
   var code = uglify ? uglifyHtml(src[0]) : src[0];
-  var js = code ? "'use strict';var echo='"+replaceCtrl(code)+"'" : "'use strict';var echo=''";
+  var js = code ? "var echo='"+replaceCtrl(code)+"'" : "var echo=''";
   var i = 1, len = src.length, srci, dataContext = '$data.', inline = true;
   for (; i<len; i++) {
     srci = src[i].split(rightTag);
@@ -27,6 +31,8 @@ function compile(src, options) {
       if (code[0]==='=' || code[0]==='+') {
         if (code[0]==='+') {
           code = code.slice(1).trimLeft();
+        } else if (code[1]===':') {
+          code = "$encode("+dataContext+code.slice(2).trimLeft()+")";
         } else if (code[1]==='!') {
           code = dataContext+code.slice(2).trimLeft();
           code = "("+code+"==null?'':"+code+")";
@@ -65,11 +71,12 @@ function compile(src, options) {
       console.log('small-tpl compile error: Unclosed tag "'+leftTag+'"\n'+srci[0]);
     }
   }
+
   js += ';return echo';
-  // console.log(js);
-  // return 'function ($data, $fn) {'+js+'}'; // 不加分号
+  // console.log(js.indexOf('$encode')>0 ? $encode+js : "'use strict';"+js);
   try {
-    return new Function('$data', '$fn', js);
+    return new Function('$data', '$fn',
+      js.indexOf('$encode')>0 ? $encode+js : "'use strict';"+js);
   } catch (e) {
     console.log('small-tpl compile error:');
     console.log(e.stack);
