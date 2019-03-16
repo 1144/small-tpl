@@ -1,6 +1,6 @@
 # small-tpl
 
-A small lightweight template engine.
+A small lightweight but powerful template engine.
 
 Install：`npm install small-tpl` or `yarn add small-tpl`
 
@@ -131,14 +131,14 @@ render({content: '<script>alert("1")</script>'})
 
 扩充默认的`$encodeChars`，扩充只影响当前模板：
 ```javascript
-const render = compile('<? $encodeChars['b'] = 'B' ?><?=: content ?>')
+const render = compile(`<? $encodeChars['b'] = 'B' ?><?=: content ?>`)
 render({content: 'abc'})
 // => aBc
 ```
 
 手动调用`$encode`函数：
 ```javascript
-const render = compile('<?+ $encode('Encode: ' + $data.content) ?>')
+const render = compile(`<?+ $encode('Encode: ' + $data.content) ?>`)
 render({content: '<b>abc</b>'})
 // => Encode: &lt;b&gt;abc&lt;/b&gt;
 // 页面上正常显示：Encode: <b>abc</b>
