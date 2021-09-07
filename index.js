@@ -23,7 +23,7 @@ function compile(src, options) {
   src = src.replace(regComment, '').split(leftTag);
   var code = uglify ? uglifyHtml(src[0]) : src[0];
   var js = code ? "var echo='"+replaceCtrl(code)+"'" : "var echo=''";
-  var i = 1, len = src.length, srci, dataContext = '$data.', inline = true;
+  var i = 1, len = src.length, srci, dataContext = '$data', inline = true;
   for (; i<len; i++) {
     srci = src[i].split(rightTag);
     if (srci.length>1) {
@@ -32,12 +32,12 @@ function compile(src, options) {
         if (code[0]==='+') {
           code = code.slice(1).trimLeft();
         } else if (code[1]===':') {
-          code = "$encode("+dataContext+code.slice(2).trimLeft()+")";
+          code = "$encode("+wrapKey(dataContext, code.slice(2))+")";
         } else if (code[1]==='!') {
-          code = dataContext+code.slice(2).trimLeft();
+          code = wrapKey(dataContext, code.slice(2));
           code = "("+code+"==null?'':"+code+")";
         } else {
-          code = dataContext+code.slice(1).trimLeft();
+          code = wrapKey(dataContext, code.slice(1));
         }
         if (inline) {
           js += "+"+code;
@@ -46,11 +46,11 @@ function compile(src, options) {
           inline = true;
         }
       } else if (code==='endeach') {
-        dataContext = '$data.';
+        dataContext = '$data';
         js += "}}();";
         inline = false;
       } else if (code.slice(0, 5)==='each ') {
-        dataContext = '$item.';
+        dataContext = '$item';
         js += ";~function(){'use strict';var $i=0,$_list_="+code.slice(5)+
           ",$count=$_list_.length,$item;for(;$i<$count;$i++){$item=$_list_[$i];";
         inline = false;
@@ -174,4 +174,8 @@ function parseEcho(code) {
     r += c;
   }
   return r;
+}
+
+function wrapKey(context, key) {
+  return context + '["' + key.trimLeft() + '"]'
 }

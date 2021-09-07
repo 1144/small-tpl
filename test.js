@@ -47,6 +47,8 @@ it(`
   '<h1>1</h1><ul><li>2</li></ul>'
 )
 
+it('<?= 全角字符🎉 ?> world', { '全角字符🎉': 'hello' }, 'hello world')
+
 console.log('Test passed!')
 
 // const render = compile('<p><?=: content ?></p>')
