@@ -1,0 +1,46 @@
+template-tag: <? ?>
+
+filter:
+  op1:
+    - package/*.md
+    - -*
+
+  op2:
+    - -*
+
+data:
+
+  conf1:
+    $default: const foo = 1
+
+    conf1v1: |
+      function foo() {
+        alert(1)
+        return {
+          a: 1,
+        }
+      }
+
+    conf1v2: |
+      function foo() {
+        alert(2)
+      }
+
+  可配置项2:
+    $default: // 一行注释
+
+    可配置项2的值1: const bar = 1
+
+  可配置项3:
+    $default:
+      -
+        id: 1
+      -
+        id: 2
+
+    conf3v1:
+      -
+        id: 3
+      -
+        id: 4
+        title: 'test'

@@ -1,0 +1,33 @@
+{
+  "name": "initwe",
+  "version": "0.0.1",
+  "description": "init whatever",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "initwe": "./index.js"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1144/initwe.git"
+  },
+  "keywords": [
+    "initwe",
+    "init"
+  ],
+  "author": "hahaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1144/initwe/issues"
+  },
+  "homepage": "https://github.com/1144/initwe#readme",
+  "dependencies": {
+    "micromatch": "^4.0.4",
+    "request": "^2.88.2",
+    "small-tpl": "^2.0.1",
+    "yaml": "^2.0.0-8"
+  }
+}

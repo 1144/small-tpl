@@ -1,0 +1,22 @@
+git: https://git.corp.hetao101.com/client-fe/htfe-tools
+
+local: ../project-tpl
+
+# src: project-foo
+
+dest: ./
+
+overwrite: true
+
+report: false
+
+filter:
+  - -*
+  - index.js -> /
+  - packages/util -> /util
+
+data:
+
+  可配置项2: 可配置项2的值1
+
+  可配置项3: conf3v1
