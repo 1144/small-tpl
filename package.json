@@ -1,6 +1,6 @@
 {
   "name": "small-tpl",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "A small lightweight but powerful template engine.",
   "main": "index.js",
   "scripts": {

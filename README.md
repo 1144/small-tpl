@@ -24,17 +24,19 @@ Install：`npm install small-tpl` or `yarn add small-tpl`
 
 `$encode` 模板内嵌函数，输出内容时对内容进行编码
 
+`$indent` 模板内嵌函数，输出内容时对内容保持当前缩进量
+
 `$item` 模板内嵌变量，遍历数组时指向当前数组元素
 
 `$i` 模板内嵌变量，遍历数组时指向当前数组元素的下标
 
 `$count` 模板内嵌变量，遍历数组时指向当前数组的长度
 
-`=` 在“each”外时输出$data对象的属性，在“each”里时输出$item对象的属性
-
-`=!` 与“=”相似，区别在于会判断属性值是否为null或undefined，是则输出空字符串
+`=` 在“each”外时输出$data对象的属性，在“each”里时输出$item对象的属性；属性值为null或undefined时输出空字符串
 
 `=:` 与“=”相似，区别在于会用`$encode`编码内容
+
+`=]` 与“=”相似，区别在于会用`$indent`保持当前缩进量
 
 `+` 直接字符串连接整个语句块，不做任何处理
 
@@ -152,7 +154,10 @@ compile('<p><?= hello ?>, <?= name ?>!</p>')
 // 模板将被编译为如下函数
 function anonymous($data, $fn) {
   'use strict';
-  var echo = '<p>' + $data.hello + ', ' + $data.name + '!</p>';
+  var $_get = function (data, key) {
+    return data[key] || (data[key] == null ? '' : data[key]);
+  };
+  var echo = '<p>'+ $_get($data, 'hello')+ ', '+ $_get($data, 'name')+ '!</p>';
   return echo
 }
 
@@ -170,13 +175,15 @@ compile(`
 // 模板将被编译为如下函数
 function anonymous($data, $fn) {
   'use strict';
-  var echo = '<h1>' + $data.title + '</h1><ul>';
+  var $_get = function (data, key) {
+    return data[key] || (data[key] == null ? '' : data[key]);
+  };
+  var echo = '<h1>'+ $_get($data, 'title')+ '</h1><ul>';
   ~function () {
-    'use strict';
-    var $i = 0, $_list_ = $data.someList, $count = $_list_.length, $item;
+    var $_list = $data.someList, $count = $_list.length, $i = 0, $item;
     for (; $i < $count; $i++) {
-      $item = $_list_[$i];
-      echo += '<li>' + $item.title + '</li>'
+      $item = $_list[$i];
+      echo += '<li>'+ $_get($item, 'title')+ '</li>'
     }
   }();
   echo += '</ul>';
@@ -188,18 +195,26 @@ compile('<p><?=: content ?></p>')
 // 模板将被编译为如下函数
 function anonymous($data, $fn) {
   'use strict';
-  var $encodeChars = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'},
-    $encode = function (s) {
-      if (typeof s === 'string') {
-        var res = '', i = 0, l = s.length;
-        for (; i < l; i++) {
-          res += ($encodeChars[s[i]] || s[i])
-        }
-        return res
+  var $_get = function (data, key) {
+    return data[key] || (data[key] == null ? '' : data[key]);
+  };
+  var $encodeChars = {
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  };
+  var $encode = function (s) {
+    if (typeof s === 'string') {
+      var res = '', i = 0, l = s.length;
+      for (; i < l; i++) {
+        res += $encodeChars[s[i]] || s[i];
       }
-      return s
-    };
-  var echo = '<p>' + $encode($data.content) + '</p>';
+      return res;
+    }
+    return s == null ? '' : s;
+  };
+  var echo = '<p>'+ $encode($_get($data, 'content'))+ '</p>';
   return echo
 }
 ```
