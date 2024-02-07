@@ -113,10 +113,10 @@ function compile(template, options) {
           'for (; $i < $count; $i++) { $item = $_list[$i];'
         inline = false
       } else {
-        js += `; ${parseEcho(code)};\r\n`
-        if (js.indexOf('$indent(') > 0) {
-          js = js.replace(regIndent, `$indent(${getIndent(src[i - 1])}, `)
+        if (code.indexOf('$indent(') > 0) {
+          code = code.replace(regIndent, `$indent(${getIndent(src[i - 1])}, `)
         }
+        js += `; ${parseEcho(code)};\r\n`
         inline = false
       }
       code = uglify ? uglifyHtml(frags[1]) : frags[1]
