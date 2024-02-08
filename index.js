@@ -86,7 +86,7 @@ function compile(template, options) {
       if (code[0] === '=' || code[0] === '+') {
         if (code[0] === '+') {
           code = code.slice(1).trimLeft()
-          if (code.indexOf('$indent(') > -1) {
+          if (code.includes('$indent(')) {
             code = code.replace(regIndent, `$indent(${getIndent(src[i - 1])}, `)
           }
         } else if (code[1] === ':') {
@@ -97,9 +97,9 @@ function compile(template, options) {
           code = wrapGetter(dataCtx, code.slice(1))
         }
         if (inline) {
-          js += `+ ${code}`
+          js += code.includes('?') ? `+ (${code})` : `+ ${code}`
         } else {
-          js += `echo += ${code}`
+          js += code.includes('?') ? `echo += (${code})` : `echo += ${code}`
           inline = true
         }
       } else if (code === 'endeach') {
@@ -113,7 +113,7 @@ function compile(template, options) {
           'for (; $i < $count; $i++) { $item = $_list[$i];'
         inline = false
       } else {
-        if (code.indexOf('$indent(') > 0) {
+        if (code.includes('$indent(')) {
           code = code.replace(regIndent, `$indent(${getIndent(src[i - 1])}, `)
         }
         js += `; ${parseEcho(code)};\r\n`
@@ -134,10 +134,10 @@ function compile(template, options) {
   }
 
   js += '; return echo'
-  if (js.indexOf('$encode(') > 0) {
+  if (js.includes('$encode(')) {
     js = $encode + js
   }
-  if (js.indexOf('$indent(') > 0) {
+  if (js.includes('$indent(')) {
     js = $indent + js
   }
   // console.log(js)

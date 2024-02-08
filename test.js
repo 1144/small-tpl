@@ -31,6 +31,8 @@ it('<%= hello %>', { hello: 'hello' }, 'hello', { openTag: '<%', closeTag: '%>' 
 
 it('<?+ $data ?>', 'hello', 'hello')
 
+it('a <?+ $data ? $data : 123 ?> b', 'hello', 'a hello b')
+
 it('<?+ $data[1] ?>', ['blabla', 'hello'], 'hello')
 
 it(`
